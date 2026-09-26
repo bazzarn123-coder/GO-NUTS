@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Go Nuts - Animated Sort</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 8 L88 30 L88 70 L50 92 L12 70 L12 30 Z' fill='%231dd1a1' stroke='%2310ac84' stroke-width='6'/><circle cx='50' cy='50' r='20' fill='%231b1464'/></svg>">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #080314;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* Mobile Responsive Game Container */
+        .game-card {
+            width: 100vw;
+            max-width: 500px;
+            height: 100vh;
+            max-height: 100%;
+            background: radial-gradient(circle at 50% 30%, #2b1854 0%, #12082b 70%, #080314 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* Header Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            z-index: 10;
+            gap: 8px;
+            background: rgba(18, 8, 43, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: linear-gradient(145deg, #a55eea, #7b32d4);
+            border: 2px solid #e0d4fc;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+            transition: transform 0.1s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .level-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .level-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            color: #f1f2f6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Progress & 3 Stars Bar */
+        .progress-bar-bg {
+            width: 100%;
+            height: 20px;
+            background-color: #120926;
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            border: 2px solid #5f27cd;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #1dd1a1, #10ac84);
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(29, 209, 161, 0.6);
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        /* Dynamic Star Markers */
+        .star-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 22px;
+            z-index: 5;
+            transition: filter 0.3s, transform 0.2s;
+        }
+
+        .star-marker svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+        }
+
+        .star-active path {
+            fill: #feca57;
+            stroke: #ff9f43;
+            stroke-width: 1px;
+        }
+
+        .star-lost path {
+            fill: #4b4b4b;
+            stroke: #2d2d2d;
+            stroke-width: 1px;
+        }
+
+        .move-counter {
+            position: absolute;
+            right: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #ffffff;
+            z-index: 6;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* Game Board Layout */
+        .board {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-end;
+            gap: 6px;
+            padding: 10px 4px 16px 4px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .bolt-column {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding-bottom: 8px;
+        }
+
+        .bolt-shaft {
+            position: absolute;
+            bottom: 6px;
+            width: 8px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                #8a95a5,
+                #8a95a5 5px,
+                #cfd6df 5px,
+                #ffffff 8px,
+                #57606f 10px
+            );
+            border-radius: 4px 4px 0 0;
+            z-index: 1;
+            box-shadow: inset -2px 0 3px rgba(0,0,0,0.4);
+        }
+
+        .bolt-base {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 10px;
+            background: radial-gradient(ellipse at center, #ffffff 0%, #a4b0be 50%, #2f3542 100%);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+        }
+
+        /* Nut Visuals */
+        .nut {
+            width: 90%;
+            z-index: 5;
+            position: relative;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.45), inset 0 -2px 2px rgba(0,0,0,0.4);
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .nut::before {
+            content: '';
+            width: 10px;
+            height: 55%;
+            background: radial-gradient(circle, #0f0820 60%, #251240 100%);
+            border-radius: 50%;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+        }
+
+        /* Accessible Nut Colors */
+        .nut-red    { background: linear-gradient(180deg, #ff4d4d, #c0392b); border: 1px solid #ff7675; }
+        .nut-yellow { background: linear-gradient(180deg, #ffeaa7, #fdcb6e); border: 1px solid #fff200; }
+        .nut-green  { background: linear-gradient(180deg, #55efc4, #00b894); border: 1px solid #81ecec; }
+        .nut-blue   { background: linear-gradient(180deg, #74b9ff, #0984e3); border: 1px solid #a29bfe; }
+        .nut-purple { background: linear-gradient(180deg, #a55eea, #6c5ce7); border: 1px solid #d6a2e8; }
+        .nut-pink   { background: linear-gradient(180deg, #ff7675, #e84393); border: 1px solid #ffb8d2; }
+        .nut-teal   { background: linear-gradient(180deg, #81ecec, #00cec9); border: 1px solid #55efc4; }
+        .nut-white  { background: linear-gradient(180deg, #ffffff, #b2bec3); border: 1px solid #ffffff; }
+
+        .nut.selected {
+            transform: translateY(-20px);
+            filter: brightness(1.3);
+        }
+
+        .animating-nut {
+            position: absolute;
+            z-index: 99;
+            pointer-events: none;
+            transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Banner Footer */
+        .banner {
+            background: linear-gradient(180deg, #241142 0%, #15092a 100%);
+            padding: 10px;
+            text-align: center;
+            border-top: 2px solid #5f27cd;
+        }
+
+        .banner h1 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #c8d6e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        /* Splash Screen & Modals */
+        .modal {
+            display: flex;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 3, 20, 0.94);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, #feca57 0%, #ff9f43 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .modal p {
+            font-size: 1rem;
+            color: #dcdde1;
+            margin-bottom: 24px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .btn-action {
+            padding: 14px 24px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: white;
+            background: linear-gradient(135deg, #1dd1a1, #10ac84);
+            border: 2px solid #55efc4;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(16, 172, 132, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a55eea, #6c5ce7);
+            border-color: #d6a2e8;
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .stars-summary {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stars-summary svg {
+            width: 42px;
+            height: 42px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card" id="game-card">
+        <!-- Top Navigation -->
+        <div class="header">
+            <div class="icon-btn" onclick="openSplash()">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </div>
+
+            <div class="level-container">
+                <div class="level-title" id="level-title">Level 1</div>
+                <div class="progress-bar-bg">
+                    <!-- 3 Dynamic Star Markers -->
+                    <div class="star-marker" id="star-3" style="left: 100%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+                    <div class="star-marker" id="star-2" style="left: 66%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+                    <div class="star-marker" id="star-1" style="left: 33%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <div class="move-counter" id="move-counter">Moves: 0</div>
+                </div>
+            </div>
+
+            <div class="icon-btn" onclick="restartLevel()">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            </div>
+        </div>
+
+        <!-- Puzzle Board -->
+        <div class="board" id="board"></div>
+
+        <!-- Bottom Banner -->
+        <div class="banner">
+            <h1>Go Nuts</h1>
+        </div>
+
+        <!-- Splash Screen -->
+        <div class="modal" id="splash-modal">
+            <h1 class="modal-title">GO NUTS</h1>
+            <p>Sort the nuts onto matching bolts!</p>
+            <div class="btn-group">
+                <button class="btn-action" id="continue-btn" style="display:none;" onclick="continueGame()">CONTINUE GAME</button>
+                <button class="btn-action btn-secondary" onclick="startNewGame()">NEW GAME</button>
+            </div>
+        </div>
+
+        <!-- Win Level Overlay -->
+        <div class="modal" id="win-modal" style="display:none;">
+            <h1 class="modal-title" style="font-size: 2.2rem;">LEVEL CLEARED!</h1>
+            <div class="stars-summary" id="win-stars"></div>
+            <p id="win-subtitle">Great job sorting all the nuts!</p>
+            <button class="btn-action" onclick="nextLevel()">NEXT LEVEL</button>
+        </div>
+
+        <!-- Game Over / Out of Moves Overlay -->
+        <div class="modal" id="no-moves-modal" style="display:none;">
+            <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial;">NO MOVES LEFT</h1>
+            <p>No valid moves available on board!</p>
+            <button class="btn-action" style="background: linear-gradient(135deg, #ff9f43, #ee5253); border-color: #ffc078;" onclick="restartLevel()">RETRY LEVEL</button>
+        </div>
+    </div>
+
+    <script>
+        const COLOR_LIST = ['yellow', 'blue', 'red', 'green', 'purple', 'pink', 'teal', 'white'];
+
+        let currentLevel = 1;
+        let gameState = [];
+        let initialGameState = [];
+        let selectedBoltIdx = null;
+        let moveCount = 0;
+        let nutsPerColor = 4;
+        let numColors = 2;
+        let isAnimating = false;
+
+        // Move Threshold Targets
+        let minMoves = 0;
+        let medMoves = 0;
+        let maxMoves = 0;
+
+        function getLevelParameters(level) {
+            let colors = Math.min(8, 2 + Math.floor((level - 1) / 3));
+            let nuts = Math.min(16, 4 + Math.floor((level - 1) * 1.2));
+            return { colors, nuts };
+        }
+
+        function calculateMoveThresholds(colors, nuts) {
+            // Estimated optimal solution depth based on puzzle capacity
+            minMoves = Math.round(colors * nuts * 0.75);
+            medMoves = Math.round(minMoves * 1.5);
+            maxMoves = Math.round(minMoves * 2.2);
+        }
+
+        function generateSolvableLevel(numColors, nutsPerColor) {
+            let maxCapacity = nutsPerColor;
+            let totalBolts = numColors + 2;
+            
+            let bolts = [];
+            for (let i = 0; i < numColors; i++) {
+                let color = COLOR_LIST[i];
+                let bolt = [];
+                for (let k = 0; k < nutsPerColor; k++) {
+                    bolt.push(color);
+                }
+                bolts.push(bolt);
+            }
+            bolts.push([]);
+            bolts.push([]);
+
+            let shuffles = numColors * nutsPerColor * 8;
+            for (let step = 0; step < shuffles; step++) {
+                let validMoves = [];
+
+                for (let src = 0; src < totalBolts; src++) {
+                    if (bolts[src].length === 0) continue;
+
+                    for (let dest = 0; dest < totalBolts; dest++) {
+                        if (src === dest) continue;
+                        if (bolts[dest].length < maxCapacity) {
+                            validMoves.push({ src, dest });
+                        }
+                    }
+                }
+
+                if (validMoves.length > 0) {
+                    let randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                    let movedNut = bolts[randomMove.src].pop();
+                    bolts[randomMove.dest].push(movedNut);
+                }
+            }
+
+            return bolts;
+        }
+
+        function saveGame() {
+            const saveObj = {
+                currentLevel,
+                gameState,
+                initialGameState,
+                moveCount,
+                nutsPerColor,
+                numColors,
+                minMoves,
+                medMoves,
+                maxMoves
+            };
+            localStorage.setItem('go_nuts_save', JSON.stringify(saveObj));
+        }
+
+        function checkSavedGame() {
+            const save = localStorage.getItem('go_nuts_save');
+            const contBtn = document.getElementById('continue-btn');
+            if (save) {
+                contBtn.style.display = 'block';
+            } else {
+                contBtn.style.display = 'none';
+            }
+        }
+
+        function continueGame() {
+            const save = JSON.parse(localStorage.getItem('go_nuts_save'));
+            if (!save) return;
+
+            currentLevel = save.currentLevel;
+            gameState = save.gameState;
+            initialGameState = save.initialGameState;
+            moveCount = save.moveCount;
+            nutsPerColor = save.nutsPerColor;
+            numColors = save.numColors;
+            minMoves = save.minMoves;
+            medMoves = save.medMoves;
+            maxMoves = save.maxMoves;
+
+            selectedBoltIdx = null;
+            isAnimating = false;
+
+            document.getElementById('splash-modal').style.display = 'none';
+            updateUI();
+            renderBoard();
+        }
+
+        function startNewGame() {
+            localStorage.removeItem('go_nuts_save');
+            initLevel(1);
+            document.getElementById('splash-modal').style.display = 'none';
+        }
+
+        function openSplash() {
+            checkSavedGame();
+            document.getElementById('splash-modal').style.display = 'flex';
+        }
+
+        function initLevel(levelNum) {
+            currentLevel = levelNum;
+            const params = getLevelParameters(currentLevel);
+            nutsPerColor = params.nuts;
+            numColors = params.colors;
+
+            calculateMoveThresholds(numColors, nutsPerColor);
+
+            gameState = generateSolvableLevel(numColors, nutsPerColor);
+            initialGameState = JSON.parse(JSON.stringify(gameState));
+
+            selectedBoltIdx = null;
+            moveCount = 0;
+            isAnimating = false;
+
+            document.getElementById('win-modal').style.display = 'none';
+            document.getElementById('no-moves-modal').style.display = 'none';
+
+            saveGame();
+            updateUI();
+            renderBoard();
+        }
+
+        function updateUI() {
+            document.getElementById('level-title').innerText = `Level ${currentLevel}`;
+            document.getElementById('move-counter').innerText = `Moves: ${moveCount}`;
+
+            // Calculate progress bar fill based on maxMoves
+            let remainingPercentage = Math.max(0, Math.min(100, ((maxMoves - moveCount) / maxMoves) * 100));
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = `${remainingPercentage}%`;
+
+            // Adjust color of progress fill based on star thresholds
+            if (moveCount <= minMoves) {
+                progressFill.style.background = 'linear-gradient(90deg, #1dd1a1, #10ac84)';
+            } else if (moveCount <= medMoves) {
+                progressFill.style.background = 'linear-gradient(90deg, #feca57, #ff9f43)';
+            } else {
+                progressFill.style.background = 'linear-gradient(90deg, #ff6b6b, #ee5253)';
+            }
+
+            // Update Star Visual States
+            setStarState('star-3', moveCount <= minMoves);
+            setStarState('star-2', moveCount <= medMoves);
+            setStarState('star-1', moveCount <= maxMoves);
+        }
+
+        function setStarState(starId, isActive) {
+            const star = document.getElementById(starId);
+            if (isActive) {
+                star.className = 'star-marker star-active';
+            } else {
+                star.className = 'star-marker star-lost';
+            }
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            const totalBolts = gameState.length;
+            
+            // Adaptive column dimensions based on container width & total bolts
+            let boltWidthPx = Math.max(30, Math.min(48, Math.floor((board.clientWidth - (totalBolts * 6)) / (totalBolts / (totalBolts > 5 ? 2 : 1)))));
+            let nutHeightPx = Math.max(10, Math.min(20, Math.floor(260 / nutsPerColor)));
+            let boltHeightPx = (nutHeightPx + 1) * nutsPerColor + 24;
+
+            gameState.forEach((boltNuts, boltIdx) => {
+                const boltEl = document.createElement('div');
+                boltEl.className = 'bolt-column';
+                boltEl.id = `bolt-${boltIdx}`;
+                boltEl.style.width = `${boltWidthPx}px`;
+                boltEl.style.height = `${boltHeightPx}px`;
+                boltEl.onclick = () => handleBoltClick(boltIdx);
+
+                const shaft = document.createElement('div');
+                shaft.className = 'bolt-shaft';
+                boltEl.appendChild(shaft);
+
+                const base = document.createElement('div');
+                base.className = 'bolt-base';
+                boltEl.appendChild(base);
+
+                const matchingGroupCount = (boltIdx === selectedBoltIdx) ? getTopGroupSize(boltNuts) : 0;
+
+                boltNuts.forEach((color, nutIdx) => {
+                    const nutEl = document.createElement('div');
+                    nutEl.className = `nut nut-${color}`;
+                    nutEl.dataset.color = color;
+                    nutEl.style.height = `${nutHeightPx}px`;
+                    nutEl.style.marginBottom = `1px`;
+                    
+                    if (boltIdx === selectedBoltIdx && nutIdx >= boltNuts.length - matchingGroupCount) {
+                        nutEl.classList.add('selected');
+                    }
+
+                    boltEl.appendChild(nutEl);
+                });
+
+                board.appendChild(boltEl);
+            });
+        }
+
+        function getTopGroupSize(bolt) {
+            if (!bolt || bolt.length === 0) return 0;
+            const topColor = bolt[bolt.length - 1];
+            let count = 0;
+            for (let i = bolt.length - 1; i >= 0; i--) {
+                if (bolt[i] === topColor) count++;
+                else break;
+            }
+            return count;
+        }
+
+        function handleBoltClick(boltIdx) {
+            if (isAnimating) return;
+
+            if (selectedBoltIdx === null) {
+                if (gameState[boltIdx].length > 0) {
+                    selectedBoltIdx = boltIdx;
+                }
+                renderBoard();
+            } else if (selectedBoltIdx === boltIdx) {
+                selectedBoltIdx = null;
+                renderBoard();
+            } else {
+                const sourceBolt = gameState[selectedBoltIdx];
+                const targetBolt = gameState[boltIdx];
+
+                if (sourceBolt.length > 0) {
+                    const movingColor = sourceBolt[sourceBolt.length - 1];
+                    const targetTopColor = targetBolt[targetBolt.length - 1];
+
+                    if (!targetTopColor || targetTopColor === movingColor) {
+                        const availableSpace = nutsPerColor - targetBolt.length;
+                        const contiguousCount = getTopGroupSize(sourceBolt);
+                        const amountToMove = Math.min(contiguousCount, availableSpace);
+
+                        if (amountToMove > 0) {
+                            animateNutMovement(selectedBoltIdx, boltIdx, amountToMove);
+                            return;
+                        }
+                    }
+                }
+                selectedBoltIdx = null;
+                renderBoard();
+            }
+        }
+
+        function animateNutMovement(srcIdx, destIdx, count) {
+            isAnimating = true;
+            const cardRect = document.getElementById('game-card').getBoundingClientRect();
+            const srcBoltEl = document.getElementById(`bolt-${srcIdx}`);
+            const destBoltEl = document.getElementById(`bolt-${destIdx}`);
+
+            const srcNuts = Array.from(srcBoltEl.querySelectorAll('.nut')).slice(-count);
+            let completed = 0;
+
+            srcNuts.forEach((nutEl, idx) => {
+                const rect = nutEl.getBoundingClientRect();
+                const color = nutEl.dataset.color;
+                nutEl.style.visibility = 'hidden';
+
+                const clone = document.createElement('div');
+                clone.className = `nut nut-${color} animating-nut`;
+                clone.style.width = `${rect.width}px`;
+                clone.style.height = `${rect.height}px`;
+                clone.style.left = `${rect.left - cardRect.left}px`;
+                clone.style.top = `${rect.top - cardRect.top}px`;
+                
+                document.getElementById('game-card').appendChild(clone);
+
+                const srcBoltRect = srcBoltEl.getBoundingClientRect();
+                const destBoltRect = destBoltEl.getBoundingClientRect();
+
+                const liftY = srcBoltRect.top - cardRect.top - 24 - (idx * 16);
+                const targetX = destBoltRect.left - cardRect.left + (destBoltRect.width - rect.width) / 2;
+                
+                const targetStackSize = gameState[destIdx].length + idx;
+                const nutHeightPx = Math.max(10, Math.min(20, Math.floor(260 / nutsPerColor)));
+                const dropY = destBoltRect.bottom - cardRect.top - 14 - ((targetStackSize + 1) * (nutHeightPx + 1));
+
+                setTimeout(() => { clone.style.top = `${liftY}px`; }, idx * 60);
+                setTimeout(() => { clone.style.left = `${targetX}px`; }, idx * 60 + 150);
+                setTimeout(() => { clone.style.top = `${dropY}px`; }, idx * 60 + 300);
+
+                setTimeout(() => {
+                    clone.remove();
+                    completed++;
+
+                    if (completed === count) {
+                        for (let k = 0; k < count; k++) {
+                            gameState[destIdx].push(gameState[srcIdx].pop());
+                        }
+
+                        moveCount++;
+                        selectedBoltIdx = null;
+                        isAnimating = false;
+
+                        saveGame();
+                        updateUI();
+
+                        if (checkWinCondition()) {
+                            renderBoard();
+                        } else {
+                            renderBoard();
+                            checkNoMovesLeft();
+                        }
+                    }
+                }, idx * 60 + 450);
+            });
+        }
+
+        function checkWinCondition() {
+            let completeStacks = 0;
+
+            for (let bolt of gameState) {
+                if (bolt.length === nutsPerColor && bolt.every(c => c === bolt[0])) {
+                    completeStacks++;
+                }
+            }
+
+            if (completeStacks === numColors) {
+                setTimeout(() => {
+                    let earnedStars = 1;
+                    if (moveCount <= minMoves) earnedStars = 3;
+                    else if (moveCount <= medMoves) earnedStars = 2;
+
+                    const starsContainer = document.getElementById('win-stars');
+                    starsContainer.innerHTML = '';
+                    for (let s = 1; s <= 3; s++) {
+                        const starSvg = document.createElement('div');
+                        starSvg.className = s <= earnedStars ? 'star-marker star-active' : 'star-marker star-lost';
+                        starSvg.style.position = 'relative';
+                        starSvg.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+                        starsContainer.appendChild(starSvg);
+                    }
+
+                    document.getElementById('win-subtitle').innerText = `Cleared level ${currentLevel} in ${moveCount} moves!`;
+                    document.getElementById('win-modal').style.display = 'flex';
+                }, 200);
+                return true;
+            }
+            return false;
+        }
+
+        function checkNoMovesLeft() {
+            for (let i = 0; i < gameState.length; i++) {
+                const source = gameState[i];
+                if (source.length === 0) continue;
+
+                const sourceColor = source[source.length - 1];
+
+                for (let j = 0; j < gameState.length; j++) {
+                    if (i === j) continue;
+                    const target = gameState[j];
+
+                    if (target.length < nutsPerColor) {
+                        const targetColor = target[target.length - 1];
+                        if (!targetColor || targetColor === sourceColor) {
+                            return; // Valid move exists
+                        }
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                document.getElementById('no-moves-modal').style.display = 'flex';
+            }, 300);
+        }
+
+        function restartLevel() {
+            if (isAnimating) return;
+            gameState = JSON.parse(JSON.stringify(initialGameState));
+            selectedBoltIdx = null;
+            moveCount = 0;
+            document.getElementById('win-modal').style.display = 'none';
+            document.getElementById('no-moves-modal').style.display = 'none';
+            
+            saveGame();
+            updateUI();
+            renderBoard();
+        }
+
+        function nextLevel() {
+            initLevel(currentLevel + 1);
+        }
+
+        window.onload = () => {
+            checkSavedGame();
+        };
+
+        window.onresize = () => {
+            if (gameState.length > 0) renderBoard();
+        };
+    </script>
+</body>
+</html>
