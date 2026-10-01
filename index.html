@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Go Nuts - 45° True Core</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 8 L88 30 L88 70 L50 92 L12 70 L12 30 Z' fill='%231dd1a1' stroke='%2310ac84' stroke-width='6'/><circle cx='50' cy='50' r='20' fill='%231b1464'/></svg>">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #080314;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* Mobile Responsive Game Container */
+        .game-card {
+            width: 100vw;
+            max-width: 800px;
+            height: 100vh;
+            max-height: 100%;
+            background: radial-gradient(circle at 50% 30%, #2b1854 0%, #12082b 70%, #080314 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* Header Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            z-index: 10;
+            gap: 12px;
+            background: rgba(18, 8, 43, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            background: linear-gradient(145deg, #a55eea, #7b32d4);
+            border: 2px solid #e0d4fc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Lower Action Bar (Home & Undo) */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            padding: 6px 12px 2px 12px;
+            z-index: 10;
+            justify-content: flex-start;
+        }
+
+        .rect-btn {
+            height: 36px;
+            min-width: 110px;
+            padding: 0 14px;
+            background: linear-gradient(145deg, #a55eea, #7b32d4);
+            border: 2px solid #e0d4fc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+            transition: transform 0.1s, opacity 0.2s;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: white;
+        }
+
+        .rect-btn:active {
+            transform: scale(0.95);
+        }
+
+        .rect-btn.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .rect-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .level-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .level-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+            color: #f1f2f6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Progress & 3 Stars Bar */
+        .progress-bar-bg {
+            width: 100%;
+            height: 16px;
+            background-color: #120926;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            border: 2px solid #5f27cd;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #1dd1a1, #10ac84);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(29, 209, 161, 0.6);
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        /* Dynamic Star Markers */
+        .star-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            z-index: 5;
+            transition: filter 0.3s, transform 0.2s;
+        }
+
+        .star-marker svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+        }
+
+        .star-active path {
+            fill: #feca57;
+            stroke: #ff9f43;
+            stroke-width: 1px;
+        }
+
+        .star-lost path {
+            fill: #4b4b4b;
+            stroke: #2d2d2d;
+            stroke-width: 1px;
+        }
+
+        .move-counter {
+            position: absolute;
+            right: 6px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #ffffff;
+            z-index: 6;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* Game Board Layout */
+        .board {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap: 8px;
+            padding: 4px 4px 60px 4px;
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .bolt-column {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* --- 3D Bolt Optical Illusion --- */
+        .bolt-shaft-bg {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            width: 30%;
+            left: 35%;
+            background: 
+                repeating-linear-gradient(180deg, transparent, transparent 3px, rgba(0,0,0,0.2) 4px, rgba(0,0,0,0.2) 5px),
+                linear-gradient(90deg, #4b5361 0%, #7d8898 20%, #e1e6ec 50%, #7d8898 80%, #4b5361 100%);
+            border-radius: 6px 6px 0 0;
+            z-index: 1; 
+            box-shadow: inset -2px 0 4px rgba(0,0,0,0.3);
+        }
+
+        .bolt-shaft-fg {
+            position: absolute;
+            top: 10px;
+            width: 30%;
+            left: 35%;
+            background: 
+                repeating-linear-gradient(180deg, transparent, transparent 3px, rgba(0,0,0,0.2) 4px, rgba(0,0,0,0.2) 5px),
+                linear-gradient(90deg, #4b5361 0%, #7d8898 20%, #e1e6ec 50%, #7d8898 80%, #4b5361 100%);
+            border-radius: 6px 6px 0 0;
+            z-index: 50; 
+            box-shadow: inset -2px 0 4px rgba(0,0,0,0.3);
+            transition: bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .bolt-base {
+            position: absolute;
+            bottom: 2px;
+            width: 100%;
+            left: 0;
+            height: 14px;
+            background: radial-gradient(ellipse at center, #cfd6df 0%, #747d8c 60%, #2f3542 100%);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+        }
+
+        /* --- 45-Degree Nut with Center Core --- */
+        .nut {
+            width: 90%;
+            left: 5%;
+            position: absolute;
+            clip-path: polygon(15% 0%, 85% 0%, 100% 25%, 100% 75%, 85% 100%, 15% 100%, 0% 75%, 0% 25%);
+            transition: bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .nut::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+            background: 
+                radial-gradient(ellipse 26% 40% at center, rgba(0,0,0,0.85) 40%, transparent 55%),
+                linear-gradient(0deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.55) 100%);
+            z-index: 6;
+        }
+
+        .nut::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 33.33%; 
+            height: 38%;
+            background: linear-gradient(90deg, #4b5361 0%, #7d8898 20%, #e1e6ec 50%, #7d8898 80%, #4b5361 100%);
+            border-radius: 50%;
+            z-index: 7;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+        }
+
+        .nut-red    { background: linear-gradient(90deg, #8b0000 0%, #8b0000 15%, #e74c3c 15%, #e74c3c 85%, #600000 85%, #600000 100%); }
+        .nut-yellow { background: linear-gradient(90deg, #d35400 0%, #d35400 15%, #f1c40f 15%, #f1c40f 85%, #b9770e 85%, #b9770e 100%); }
+        .nut-green  { background: linear-gradient(90deg, #00695c 0%, #00695c 15%, #1abc9c 15%, #1abc9c 85%, #004d40 85%, #004d40 100%); }
+        .nut-blue   { background: linear-gradient(90deg, #154360 0%, #154360 15%, #3498db 15%, #3498db 85%, #1a5276 85%, #1a5276 100%); }
+        .nut-purple { background: linear-gradient(90deg, #4a235a 0%, #4a235a 15%, #9b59b6 15%, #9b59b6 85%, #512e5f 85%, #512e5f 100%); }
+        .nut-pink   { background: linear-gradient(90deg, #88124e 0%, #88124e 15%, #fd79a8 15%, #fd79a8 85%, #6c0d3d 85%, #6c0d3d 100%); }
+        .nut-teal   { background: linear-gradient(90deg, #e58e26 0%, #e58e26 15%, #fad390 15%, #fad390 85%, #b7711f 85%, #b7711f 100%); }
+        .nut-white  { background: linear-gradient(90deg, #7f8c8d 0%, #7f8c8d 15%, #ecf0f1 15%, #ecf0f1 85%, #95a5a6 85%, #95a5a6 100%); }
+
+        .nut.selected {
+            filter: brightness(1.2);
+            z-index: 40 !important;
+        }
+
+        .animating-nut {
+            position: absolute;
+            z-index: 99 !important;
+            pointer-events: none;
+            transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Banner Footer */
+        .banner {
+            background: linear-gradient(180deg, #241142 0%, #15092a 100%);
+            padding: 8px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            text-align: center;
+            border-top: 2px solid #5f27cd;
+            z-index: 10;
+        }
+
+        .banner h1 {
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #c8d6e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        /* Splash Screen & Modals */
+        .modal {
+            display: flex;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 3, 20, 0.94);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, #feca57 0%, #ff9f43 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .modal p {
+            font-size: 0.95rem;
+            color: #dcdde1;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .btn-action {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: white;
+            background: linear-gradient(135deg, #1dd1a1, #10ac84);
+            border: 2px solid #55efc4;
+            border-radius: 26px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(16, 172, 132, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a55eea, #6c5ce7);
+            border-color: #d6a2e8;
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .stars-summary {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stars-summary svg {
+            width: 38px;
+            height: 38px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card" id="game-card">
+        <!-- Top Navigation Bar -->
+        <div class="header">
+            <!-- Center Progress Container -->
+            <div class="level-container">
+                <div class="level-title" id="level-title">Level 1</div>
+                <div class="progress-bar-bg">
+                    <div class="star-marker" id="star-3" style="left: 100%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+                    <div class="star-marker" id="star-2" style="left: 66%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+                    <div class="star-marker" id="star-1" style="left: 33%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <div class="move-counter" id="move-counter">Moves: 0</div>
+                </div>
+            </div>
+
+            <!-- Right Side Reset Control -->
+            <div class="icon-btn" onclick="restartLevel()" title="Restart Level">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            </div>
+        </div>
+
+        <!-- Lower Action Bar for Home & Undo -->
+        <div class="action-bar">
+            <div class="rect-btn" onclick="openSplash()" title="Home">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>HOME</span>
+            </div>
+
+            <div class="rect-btn disabled" id="undo-btn" onclick="undoMove()" title="Undo Move">
+                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                <span>UNDO</span>
+            </div>
+        </div>
+
+        <div class="board" id="board"></div>
+
+        <div class="banner">
+            <h1>Go Nuts</h1>
+        </div>
+
+        <!-- Overlays -->
+        <div class="modal" id="splash-modal">
+            <h1 class="modal-title">GO NUTS</h1>
+            <p>Sort the nuts onto matching bolts!</p>
+            <div class="btn-group">
+                <button class="btn-action" id="continue-btn" style="display:none;" onclick="continueGame()">CONTINUE GAME</button>
+                <button class="btn-action btn-secondary" onclick="startNewGame()">NEW GAME</button>
+            </div>
+        </div>
+
+        <div class="modal" id="win-modal" style="display:none;">
+            <h1 class="modal-title" style="font-size: 2rem;">LEVEL CLEARED!</h1>
+            <div class="stars-summary" id="win-stars"></div>
+            <p id="win-subtitle">Great job sorting all the nuts!</p>
+            <button class="btn-action" onclick="nextLevel()">NEXT LEVEL</button>
+        </div>
+
+        <div class="modal" id="no-moves-modal" style="display:none;">
+            <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial; font-size: 2rem;">NO MOVES LEFT</h1>
+            <p>No valid moves available on board!</p>
+            <div class="btn-group">
+                <button class="btn-action" style="background: linear-gradient(135deg, #a55eea, #6c5ce7); border-color: #d6a2e8;" onclick="undoMove()">UNDO MOVE</button>
+                <button class="btn-action" style="background: linear-gradient(135deg, #ff9f43, #ee5253); border-color: #ffc078;" onclick="restartLevel()">RETRY LEVEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const COLOR_LIST = ['yellow', 'blue', 'red', 'green', 'purple', 'pink', 'teal', 'white'];
+
+        // Web Audio Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'pickup') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(500, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'drop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(523.25, now + 0.1);
+                osc.frequency.setValueAtTime(659.25, now + 0.2);
+                osc.frequency.setValueAtTime(800, now + 0.3);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            }
+        }
+
+        let currentLevel = 1;
+        let gameState = [];
+        let initialGameState = [];
+        let historyStack = [];
+        let selectedBoltIdx = null;
+        let moveCount = 0;
+        let nutsPerColor = 4;
+        let numColors = 2;
+        let isAnimating = false;
+
+        let minMoves = 0;
+        let medMoves = 0;
+        let maxMoves = 0;
+
+        function getLevelParameters(level) {
+            let colors = Math.min(8, 2 + Math.floor((level - 1) / 3));
+            let nuts = Math.min(16, 4 + Math.floor((level - 1) * 1.2));
+            return { colors, nuts };
+        }
+
+        function calculateMoveThresholds(colors, nuts) {
+            minMoves = Math.round(colors * nuts * 0.75);
+            medMoves = Math.round(minMoves * 1.5);
+            maxMoves = Math.round(minMoves * 2.2);
+        }
+
+        function generateSolvableLevel(numColors, nutsPerColor) {
+            let maxCapacity = nutsPerColor;
+            let totalBolts = numColors + 2;
+            
+            let bolts = [];
+            for (let i = 0; i < numColors; i++) {
+                let color = COLOR_LIST[i];
+                let bolt = [];
+                for (let k = 0; k < nutsPerColor; k++) {
+                    bolt.push(color);
+                }
+                bolts.push(bolt);
+            }
+            bolts.push([]);
+            bolts.push([]);
+
+            let shuffles = numColors * nutsPerColor * 8;
+            for (let step = 0; step < shuffles; step++) {
+                let validMoves = [];
+                for (let src = 0; src < totalBolts; src++) {
+                    if (bolts[src].length === 0) continue;
+                    for (let dest = 0; dest < totalBolts; dest++) {
+                        if (src === dest) continue;
+                        if (bolts[dest].length < maxCapacity) {
+                            validMoves.push({ src, dest });
+                        }
+                    }
+                }
+                if (validMoves.length > 0) {
+                    let randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                    let movedNut = bolts[randomMove.src].pop();
+                    bolts[randomMove.dest].push(movedNut);
+                }
+            }
+            return bolts;
+        }
+
+        function saveGame() {
+            const saveObj = { currentLevel, gameState, initialGameState, historyStack, moveCount, nutsPerColor, numColors, minMoves, medMoves, maxMoves };
+            localStorage.setItem('go_nuts_save', JSON.stringify(saveObj));
+        }
+
+        function checkSavedGame() {
+            const save = localStorage.getItem('go_nuts_save');
+            document.getElementById('continue-btn').style.display = save ? 'block' : 'none';
+        }
+
+        function continueGame() {
+            const save = JSON.parse(localStorage.getItem('go_nuts_save'));
+            if (!save) return;
+
+            currentLevel = save.currentLevel;
+            gameState = save.gameState;
+            initialGameState = save.initialGameState;
+            historyStack = save.historyStack || [];
+            moveCount = save.moveCount;
+            nutsPerColor = save.nutsPerColor;
+            numColors = save.numColors;
+            minMoves = save.minMoves;
+            medMoves = save.medMoves;
+            maxMoves = save.maxMoves;
+
+            selectedBoltIdx = null;
+            isAnimating = false;
+
+            document.getElementById('splash-modal').style.display = 'none';
+            updateUI();
+            renderBoard();
+        }
+
+        function startNewGame() {
+            localStorage.removeItem('go_nuts_save');
+            initLevel(1);
+            document.getElementById('splash-modal').style.display = 'none';
+        }
+
+        function openSplash() {
+            checkSavedGame();
+            document.getElementById('splash-modal').style.display = 'flex';
+        }
+
+        function initLevel(levelNum) {
+            currentLevel = levelNum;
+            const params = getLevelParameters(currentLevel);
+            nutsPerColor = params.nuts;
+            numColors = params.colors;
+
+            calculateMoveThresholds(numColors, nutsPerColor);
+            gameState = generateSolvableLevel(numColors, nutsPerColor);
+            initialGameState = JSON.parse(JSON.stringify(gameState));
+            historyStack = [];
+
+            selectedBoltIdx = null;
+            moveCount = 0;
+            isAnimating = false;
+
+            document.getElementById('win-modal').style.display = 'none';
+            document.getElementById('no-moves-modal').style.display = 'none';
+
+            saveGame();
+            updateUI();
+            renderBoard();
+        }
+
+        function undoMove() {
+            if (isAnimating || historyStack.length === 0) return;
+
+            const previousState = historyStack.pop();
+            gameState = previousState.gameState;
+            moveCount = previousState.moveCount;
+            selectedBoltIdx = null;
+
+            document.getElementById('no-moves-modal').style.display = 'none';
+            playSound('drop');
+
+            saveGame();
+            updateUI();
+            renderBoard();
+        }
+
+        function updateUI() {
+            document.getElementById('level-title').innerText = `Level ${currentLevel}`;
+            document.getElementById('move-counter').innerText = `Moves: ${moveCount}`;
+
+            const undoBtn = document.getElementById('undo-btn');
+            if (historyStack.length > 0) {
+                undoBtn.classList.remove('disabled');
+            } else {
+                undoBtn.classList.add('disabled');
+            }
+
+            let remainingPercentage = Math.max(0, Math.min(100, ((maxMoves - moveCount) / maxMoves) * 100));
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = `${remainingPercentage}%`;
+
+            if (moveCount <= minMoves) {
+                progressFill.style.background = 'linear-gradient(90deg, #1dd1a1, #10ac84)';
+            } else if (moveCount <= medMoves) {
+                progressFill.style.background = 'linear-gradient(90deg, #feca57, #ff9f43)';
+            } else {
+                progressFill.style.background = 'linear-gradient(90deg, #ff6b6b, #ee5253)';
+            }
+
+            setStarState('star-3', moveCount <= minMoves);
+            setStarState('star-2', moveCount <= medMoves);
+            setStarState('star-1', moveCount <= maxMoves);
+        }
+
+        function setStarState(starId, isActive) {
+            document.getElementById(starId).className = isActive ? 'star-marker star-active' : 'star-marker star-lost';
+        }
+
+        function getTopGroupSize(bolt) {
+            if (!bolt || bolt.length === 0) return 0;
+            const topColor = bolt[bolt.length - 1];
+            let count = 0;
+            for (let i = bolt.length - 1; i >= 0; i--) {
+                if (bolt[i] === topColor) count++;
+                else break;
+            }
+            return count;
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            const totalBolts = gameState.length;
+            
+            // Scaled Sizing calculations optimized for tighter fit
+            let boltWidthPx = Math.max(38, Math.min(68, Math.floor((board.clientWidth - (totalBolts * 10)) / (totalBolts / (totalBolts > 5 ? 2 : 1)))));
+            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
+            
+            let overlapPx = Math.floor(nutHeightPx * 0.35); 
+            let effectiveHeight = nutHeightPx - overlapPx;
+            let boltHeightPx = (nutsPerColor + 1.25) * effectiveHeight + 30;
+            
+            const BASE_Y = 10;
+
+            gameState.forEach((boltNuts, boltIdx) => {
+                const boltEl = document.createElement('div');
+                boltEl.className = 'bolt-column';
+                boltEl.id = `bolt-${boltIdx}`;
+                boltEl.style.width = `${boltWidthPx}px`;
+                boltEl.style.height = `${boltHeightPx}px`;
+                boltEl.onclick = () => handleBoltClick(boltIdx);
+
+                const shaftBg = document.createElement('div');
+                shaftBg.className = 'bolt-shaft-bg';
+                boltEl.appendChild(shaftBg);
+
+                const base = document.createElement('div');
+                base.className = 'bolt-base';
+                boltEl.appendChild(base);
+
+                const matchingGroupCount = (boltIdx === selectedBoltIdx) ? getTopGroupSize(boltNuts) : 0;
+                let fgBottom = BASE_Y;
+
+                boltNuts.forEach((color, nutIdx) => {
+                    const nutEl = document.createElement('div');
+                    nutEl.className = `nut nut-${color}`;
+                    nutEl.dataset.color = color;
+                    nutEl.style.height = `${nutHeightPx}px`;
+                    
+                    let bottomY = BASE_Y + (nutIdx * effectiveHeight);
+                    let isSelected = boltIdx === selectedBoltIdx && nutIdx >= boltNuts.length - matchingGroupCount;
+                    
+                    if (isSelected) {
+                        bottomY += (nutHeightPx * 0.7); 
+                        nutEl.classList.add('selected');
+                    }
+                    
+                    nutEl.style.bottom = `${bottomY}px`;
+                    nutEl.style.zIndex = 5 + nutIdx; 
+                    boltEl.appendChild(nutEl);
+
+                    if (nutIdx === boltNuts.length - 1) {
+                        fgBottom = bottomY + (nutHeightPx * 0.74); 
+                    }
+                });
+
+                const shaftFg = document.createElement('div');
+                shaftFg.className = 'bolt-shaft-fg';
+                shaftFg.style.bottom = `${fgBottom}px`;
+                boltEl.appendChild(shaftFg);
+
+                if (matchingGroupCount > 0 && boltNuts.length > matchingGroupCount) {
+                    let unliftedTopIdx = boltNuts.length - matchingGroupCount - 1;
+                    let unliftedBottomY = BASE_Y + (unliftedTopIdx * effectiveHeight);
+                    let unliftedFgBottom = unliftedBottomY + (nutHeightPx * 0.74);
+                    
+                    const shaftMid = document.createElement('div');
+                    shaftMid.className = 'bolt-shaft-fg';
+                    shaftMid.style.bottom = `${unliftedFgBottom}px`;
+                    shaftMid.style.zIndex = 20;
+                    boltEl.appendChild(shaftMid);
+                }
+
+                board.appendChild(boltEl);
+            });
+        }
+
+        function handleBoltClick(boltIdx) {
+            if (isAnimating) return;
+
+            if (selectedBoltIdx === null) {
+                if (gameState[boltIdx].length > 0) {
+                    playSound('pickup');
+                    selectedBoltIdx = boltIdx;
+                }
+                renderBoard();
+            } else if (selectedBoltIdx === boltIdx) {
+                playSound('drop');
+                selectedBoltIdx = null;
+                renderBoard();
+            } else {
+                const sourceBolt = gameState[selectedBoltIdx];
+                const targetBolt = gameState[boltIdx];
+
+                if (sourceBolt.length > 0) {
+                    const movingColor = sourceBolt[sourceBolt.length - 1];
+                    const targetTopColor = targetBolt[targetBolt.length - 1];
+
+                    if (!targetTopColor || targetTopColor === movingColor) {
+                        const availableSpace = nutsPerColor - targetBolt.length;
+                        const contiguousCount = getTopGroupSize(sourceBolt);
+                        const amountToMove = Math.min(contiguousCount, availableSpace);
+
+                        if (amountToMove > 0) {
+                            animateNutMovement(selectedBoltIdx, boltIdx, amountToMove);
+                            return;
+                        }
+                    }
+                }
+                selectedBoltIdx = null;
+                renderBoard();
+            }
+        }
+
+        function animateNutMovement(srcIdx, destIdx, count) {
+            isAnimating = true;
+
+            // Push state before modifying
+            historyStack.push({
+                gameState: JSON.parse(JSON.stringify(gameState)),
+                moveCount: moveCount
+            });
+
+            const cardRect = document.getElementById('game-card').getBoundingClientRect();
+            const srcBoltEl = document.getElementById(`bolt-${srcIdx}`);
+            const destBoltEl = document.getElementById(`bolt-${destIdx}`);
+
+            const srcNuts = Array.from(srcBoltEl.querySelectorAll('.nut')).slice(-count);
+            let completed = 0;
+            
+            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
+            let overlapPx = Math.floor(nutHeightPx * 0.35); 
+            let effectiveHeight = nutHeightPx - overlapPx;
+            const BASE_Y = 10;
+
+            srcNuts.forEach((nutEl, idx) => {
+                const rect = nutEl.getBoundingClientRect();
+                const color = nutEl.dataset.color;
+                nutEl.style.visibility = 'hidden';
+
+                const clone = document.createElement('div');
+                clone.className = `nut nut-${color} animating-nut`;
+                clone.style.width = `${rect.width}px`;
+                clone.style.height = `${rect.height}px`;
+                clone.style.left = `${rect.left - cardRect.left}px`;
+                clone.style.top = `${rect.top - cardRect.top}px`;
+                
+                document.getElementById('game-card').appendChild(clone);
+
+                const srcBoltRect = srcBoltEl.getBoundingClientRect();
+                const destBoltRect = destBoltEl.getBoundingClientRect();
+
+                const liftY = srcBoltRect.top - cardRect.top - 20 - (idx * 16);
+                const targetX = destBoltRect.left - cardRect.left + (destBoltRect.width - rect.width) / 2;
+                
+                const targetStackSize = gameState[destIdx].length + idx;
+                const destNutBottom = BASE_Y + targetStackSize * effectiveHeight;
+                const dropY = destBoltRect.bottom - cardRect.top - destNutBottom - nutHeightPx;
+
+                setTimeout(() => { clone.style.top = `${liftY}px`; }, idx * 60);
+                setTimeout(() => { clone.style.left = `${targetX}px`; }, idx * 60 + 150);
+                setTimeout(() => { clone.style.top = `${dropY}px`; }, idx * 60 + 300);
+
+                setTimeout(() => {
+                    clone.remove();
+                    playSound('drop');
+                    completed++;
+
+                    if (completed === count) {
+                        for (let k = 0; k < count; k++) {
+                            gameState[destIdx].push(gameState[srcIdx].pop());
+                        }
+
+                        moveCount++;
+                        selectedBoltIdx = null;
+                        isAnimating = false;
+
+                        saveGame();
+                        updateUI();
+
+                        if (checkWinCondition()) {
+                            renderBoard();
+                        } else {
+                            renderBoard();
+                            checkNoMovesLeft();
+                        }
+                    }
+                }, idx * 60 + 450);
+            });
+        }
+
+        function checkWinCondition() {
+            let completeStacks = 0;
+            for (let bolt of gameState) {
+                if (bolt.length === nutsPerColor && bolt.every(c => c === bolt[0])) {
+                    completeStacks++;
+                }
+            }
+
+            if (completeStacks === numColors) {
+                playSound('win');
+                setTimeout(() => {
+                    let earnedStars = 1;
+                    if (moveCount <= minMoves) earnedStars = 3;
+                    else if (moveCount <= medMoves) earnedStars = 2;
+
+                    const starsContainer = document.getElementById('win-stars');
+                    starsContainer.innerHTML = '';
+                    for (let s = 1; s <= 3; s++) {
+                        const starSvg = document.createElement('div');
+                        starSvg.className = s <= earnedStars ? 'star-marker star-active' : 'star-marker star-lost';
+                        starSvg.style.position = 'relative';
+                        starSvg.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+                        starsContainer.appendChild(starSvg);
+                    }
+
+                    document.getElementById('win-subtitle').innerText = `Cleared level ${currentLevel} in ${moveCount} moves!`;
+                    document.getElementById('win-modal').style.display = 'flex';
+                }, 200);
+                return true;
+            }
+            return false;
+        }
+
+        function checkNoMovesLeft() {
+            for (let i = 0; i < gameState.length; i++) {
+                const source = gameState[i];
+                if (source.length === 0) continue;
+                const sourceColor = source[source.length - 1];
+
+                for (let j = 0; j < gameState.length; j++) {
+                    if (i === j) continue;
+                    const target = gameState[j];
+                    if (target.length < nutsPerColor) {
+                        const targetColor = target[target.length - 1];
+                        if (!targetColor || targetColor === sourceColor) return;
+                    }
+                }
+            }
+            setTimeout(() => { document.getElementById('no-moves-modal').style.display = 'flex'; }, 300);
+        }
+
+        function restartLevel() {
+            if (isAnimating) return;
+            gameState = JSON.parse(JSON.stringify(initialGameState));
+            historyStack = [];
+            selectedBoltIdx = null;
+            moveCount = 0;
+            document.getElementById('win-modal').style.display = 'none';
+            document.getElementById('no-moves-modal').style.display = 'none';
+            saveGame();
+            updateUI();
+            renderBoard();
+        }
+
+        function nextLevel() {
+            initLevel(currentLevel + 1);
+        }
+
+        window.onload = () => { checkSavedGame(); };
+        window.onresize = () => { if (gameState.length > 0) renderBoard(); };
+    </script>
+</body>
+</html>
