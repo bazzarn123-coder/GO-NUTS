@@ -364,7 +364,9 @@
             background: url('1790985295566.jpg') no-repeat center center;
             background-size: cover;
             backdrop-filter: none; /* Removed blur */
-            padding-bottom: 90px; /* Raised padding slightly so it doesn't get caught behind nav bar */
+            justify-content: flex-start; /* Aligns content to the top */
+            padding-top: 20vh; /* Pushes content down from the top edge to float above bolts */
+            padding-bottom: 0; 
         }
 
         .modal-title {
@@ -478,7 +480,6 @@
 
         <!-- Overlays -->
         <div class="modal" id="splash-modal">
-            <!-- Removed GO NUTS text title here -->
             <p>Sort the nuts onto matching bolts!</p>
             <div class="btn-group">
                 <button class="btn-action" id="continue-btn" style="display:none;" onclick="continueGame()">CONTINUE GAME</button>
