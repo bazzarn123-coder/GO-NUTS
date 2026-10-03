@@ -34,22 +34,12 @@
             height: -webkit-fill-available;
         }
 
-        /* Scaling Wrapper for Tablets and Laptops */
-        .game-scale-wrapper {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        /* Mobile Responsive Game Container */
+        /* Tablet & Mobile Optimized Container */
         .game-card {
             width: 100vw;
-            max-width: 480px;
+            max-width: 768px;
             height: 100vh;
-            max-height: 920px;
+            max-height: 1024px;
             background: radial-gradient(circle at 50% 30%, #2b1854 0%, #12082b 70%, #080314 100%);
             display: flex;
             flex-direction: column;
@@ -59,10 +49,11 @@
             overflow: hidden;
         }
 
-        @media (min-width: 500px) {
+        @media (min-width: 600px) {
             .game-card {
-                border-radius: 24px;
+                border-radius: 20px;
                 border: 2px solid #5f27cd;
+                height: 94vh;
             }
         }
 
@@ -71,17 +62,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 10px 16px;
             z-index: 10;
-            gap: 12px;
+            gap: 16px;
             background: rgba(18, 8, 43, 0.6);
             backdrop-filter: blur(8px);
         }
 
         .icon-btn {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
             background: linear-gradient(145deg, #a55eea, #7b32d4);
             border: 2px solid #e0d4fc;
             border-radius: 10px;
@@ -98,8 +89,8 @@
         }
 
         .icon-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             fill: white;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
@@ -108,27 +99,27 @@
         .action-bar {
             display: flex;
             gap: 12px;
-            padding: 6px 12px 2px 12px;
+            padding: 8px 16px 4px 16px;
             z-index: 10;
             justify-content: flex-start;
         }
 
         .rect-btn {
-            height: 36px;
-            min-width: 110px;
-            padding: 0 14px;
+            height: 40px;
+            min-width: 120px;
+            padding: 0 16px;
             background: linear-gradient(145deg, #a55eea, #7b32d4);
             border: 2px solid #e0d4fc;
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
             transition: transform 0.1s, opacity 0.2s;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             letter-spacing: 0.5px;
             color: white;
         }
@@ -143,8 +134,8 @@
         }
 
         .rect-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             fill: white;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
@@ -157,9 +148,9 @@
         }
 
         .level-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 800;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             letter-spacing: 0.5px;
             color: #f1f2f6;
             text-shadow: 0 2px 4px rgba(0,0,0,0.6);
@@ -168,7 +159,7 @@
         /* Progress & 3 Stars Bar */
         .progress-bar-bg {
             width: 100%;
-            height: 16px;
+            height: 18px;
             background-color: #120926;
             border-radius: 10px;
             position: relative;
@@ -193,8 +184,8 @@
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             z-index: 5;
             transition: filter 0.3s, transform 0.2s;
         }
@@ -219,8 +210,8 @@
 
         .move-counter {
             position: absolute;
-            right: 6px;
-            font-size: 0.65rem;
+            right: 8px;
+            font-size: 0.7rem;
             font-weight: 800;
             color: #ffffff;
             z-index: 6;
@@ -234,9 +225,8 @@
             flex-wrap: wrap;
             justify-content: center;
             align-content: center;
-            gap: 8px;
-            padding: 4px 4px 60px 4px;
-            padding-bottom: max(60px, env(safe-area-inset-bottom));
+            gap: 12px;
+            padding: 10px;
             position: relative;
             overflow-y: auto;
         }
@@ -249,8 +239,8 @@
         /* --- 3D Bolt Optical Illusion --- */
         .bolt-shaft-bg {
             position: absolute;
-            top: 10px;
-            bottom: 10px;
+            top: 12px;
+            bottom: 12px;
             width: 30%;
             left: 35%;
             background: 
@@ -263,7 +253,7 @@
 
         .bolt-shaft-fg {
             position: absolute;
-            top: 10px;
+            top: 12px;
             width: 30%;
             left: 35%;
             background: 
@@ -280,7 +270,7 @@
             bottom: 2px;
             width: 100%;
             left: 0;
-            height: 14px;
+            height: 16px;
             background: radial-gradient(ellipse at center, #cfd6df 0%, #747d8c 60%, #2f3542 100%);
             border-radius: 50%;
             z-index: 2;
@@ -345,15 +335,14 @@
         /* Banner Footer */
         .banner {
             background: linear-gradient(180deg, #241142 0%, #15092a 100%);
-            padding: 8px;
-            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            padding: 10px;
             text-align: center;
             border-top: 2px solid #5f27cd;
             z-index: 10;
         }
 
         .banner h1 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 900;
             letter-spacing: 1.5px;
             background: linear-gradient(180deg, #ffffff 0%, #c8d6e5 100%);
@@ -367,8 +356,7 @@
             display: flex;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(8, 3, 20, 0.94);
-            backdrop-filter: blur(6px);
+            background: radial-gradient(circle at 50% 30%, #3b1f75 0%, #170a36 70%, #080314 100%);
             z-index: 100;
             flex-direction: column;
             justify-content: center;
@@ -377,37 +365,30 @@
             text-align: center;
         }
 
-        #splash-modal {
-            background: linear-gradient(rgba(8, 3, 20, 0.3), rgba(8, 3, 20, 0.7)), url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4QBaRXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUAAAABAAAARgEoAAMAAAABAAIAAAExAAIAAAARAAAATgEyAAIAAAAUAAAAWIdpAAQAAAABAAAAaAAAAMgAAABIAAAAAQAAAEgAAABEdC5qcGcAAAgACvyQAAAwAQCK5JAAACABAIqSQUECAJFAAAASAAAAEtpbnRlbmljYXRpb25zIEluYy4gVmlzdWFsIFZpc3VhbCBhbmQgRGlnaXRhbCBJbWFnaW5nIFN0dWRpbwAASAAAAAEAAABIAAAAAQAAUGhvdG9zaG9wAERlZmF1bHQgc2V0dGluZ3MAV2lzdWFsIFZpc3VhbCBhbmQgRGlnaXRhbCBJbWFnaW5nIFN0dWRpbwAAQVNNVzIwMjYAALgBAAADAAAAAQABAAEA...') no-repeat center center;
-            background-size: cover;
-            justify-content: flex-end;
-            padding-bottom: 120px;
-        }
-
         .modal-title {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
             background: linear-gradient(180deg, #feca57 0%, #ff9f43 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             text-transform: uppercase;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .modal p {
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             color: #dcdde1;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
             text-shadow: 0 2px 6px rgba(0,0,0,0.8);
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             width: 100%;
-            max-width: 240px;
+            max-width: 260px;
         }
 
         .btn-action {
@@ -435,89 +416,88 @@
 
         .stars-summary {
             display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stars-summary svg {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-scale-wrapper" id="scale-wrapper">
-        <div class="game-card" id="game-card">
-            <!-- Top Navigation Bar -->
-            <div class="header">
-                <!-- Center Progress Container -->
-                <div class="level-container">
-                    <div class="level-title" id="level-title">Level 1</div>
-                    <div class="progress-bar-bg">
-                        <div class="star-marker" id="star-3" style="left: 100%;">
-                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        </div>
-                        <div class="star-marker" id="star-2" style="left: 66%;">
-                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        </div>
-                        <div class="star-marker" id="star-1" style="left: 33%;">
-                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        </div>
-
-                        <div class="progress-fill" id="progress-fill"></div>
-                        <div class="move-counter" id="move-counter">Moves: 0</div>
+    <div class="game-card" id="game-card">
+        <!-- Top Navigation Bar -->
+        <div class="header">
+            <!-- Center Progress Container -->
+            <div class="level-container">
+                <div class="level-title" id="level-title">Level 1</div>
+                <div class="progress-bar-bg">
+                    <div class="star-marker" id="star-3" style="left: 100%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                     </div>
-                </div>
+                    <div class="star-marker" id="star-2" style="left: 66%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
+                    <div class="star-marker" id="star-1" style="left: 33%;">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    </div>
 
-                <!-- Right Side Reset Control -->
-                <div class="icon-btn" onclick="restartLevel()" title="Restart Level">
-                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                </div>
-            </div>
-
-            <!-- Lower Action Bar for Home & Undo -->
-            <div class="action-bar">
-                <div class="rect-btn" onclick="openSplash()" title="Home">
-                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                    <span>HOME</span>
-                </div>
-
-                <div class="rect-btn disabled" id="undo-btn" onclick="undoMove()" title="Undo Move">
-                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                    <span>UNDO</span>
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <div class="move-counter" id="move-counter">Moves: 0</div>
                 </div>
             </div>
 
-            <div class="board" id="board"></div>
+            <!-- Right Side Reset Control -->
+            <div class="icon-btn" onclick="restartLevel()" title="Restart Level">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            </div>
+        </div>
 
-            <div class="banner">
-                <h1>Go Nuts</h1>
+        <!-- Lower Action Bar for Home & Undo -->
+        <div class="action-bar">
+            <div class="rect-btn" onclick="openSplash()" title="Home">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>HOME</span>
             </div>
 
-            <!-- Overlays -->
-            <div class="modal" id="splash-modal">
-                <p>Sort the nuts onto matching bolts!</p>
-                <div class="btn-group">
-                    <button class="btn-action" id="continue-btn" style="display:none;" onclick="continueGame()">CONTINUE GAME</button>
-                    <button class="btn-action btn-secondary" onclick="startNewGame()">START GAME</button>
-                </div>
+            <div class="rect-btn disabled" id="undo-btn" onclick="undoMove()" title="Undo Move">
+                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                <span>UNDO</span>
             </div>
+        </div>
 
-            <div class="modal" id="win-modal" style="display:none;">
-                <h1 class="modal-title" style="font-size: 2rem;">LEVEL CLEARED!</h1>
-                <div class="stars-summary" id="win-stars"></div>
-                <p id="win-subtitle">Great job sorting all the nuts!</p>
-                <button class="btn-action" onclick="nextLevel()">NEXT LEVEL</button>
+        <div class="board" id="board"></div>
+
+        <div class="banner">
+            <h1>Go Nuts</h1>
+        </div>
+
+        <!-- Overlays -->
+        <div class="modal" id="splash-modal">
+            <h1 class="modal-title">GO NUTS</h1>
+            <p>Sort the nuts onto matching bolts!</p>
+            <div class="btn-group">
+                <button class="btn-action" id="continue-btn" style="display:none;" onclick="continueGame()">CONTINUE GAME</button>
+                <button class="btn-action btn-secondary" onclick="startNewGame()">NEW GAME</button>
             </div>
+        </div>
 
-            <div class="modal" id="no-moves-modal" style="display:none;">
-                <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial; font-size: 2rem;">NO MOVES LEFT</h1>
-                <p>No valid moves available on board!</p>
-                <div class="btn-group">
-                    <button class="btn-action" style="background: linear-gradient(135deg, #a55eea, #6c5ce7); border-color: #d6a2e8;" onclick="undoMove()">UNDO MOVE</button>
-                    <button class="btn-action" style="background: linear-gradient(135deg, #ff9f43, #ee5253); border-color: #ffc078;" onclick="restartLevel()">RETRY LEVEL</button>
-                </div>
+        <div class="modal" id="win-modal" style="display:none;">
+            <h1 class="modal-title" style="font-size: 2.2rem;">LEVEL CLEARED!</h1>
+            <div class="stars-summary" id="win-stars"></div>
+            <p id="win-subtitle">Great job sorting all the nuts!</p>
+            <button class="btn-action" onclick="nextLevel()">NEXT LEVEL</button>
+        </div>
+
+        <div class="modal" id="no-moves-modal" style="display:none;">
+            <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial; font-size: 2.2rem;">NO MOVES LEFT</h1>
+            <p>No valid moves available on board!</p>
+            <div class="btn-group">
+                <button class="btn-action" style="background: linear-gradient(135deg, #a55eea, #6c5ce7); border-color: #d6a2e8;" onclick="undoMove()">UNDO MOVE</button>
+                <button class="btn-action" style="background: linear-gradient(135deg, #ff9f43, #ee5253); border-color: #ffc078;" onclick="restartLevel()">RETRY LEVEL</button>
             </div>
         </div>
     </div>
@@ -634,13 +614,7 @@
 
         function checkSavedGame() {
             const save = localStorage.getItem('go_nuts_save');
-            const continueBtn = document.getElementById('continue-btn');
-            if (save) {
-                continueBtn.style.display = 'block';
-                continueBtn.innerText = 'CONTINUE GAME';
-            } else {
-                continueBtn.style.display = 'none';
-            }
+            document.getElementById('continue-btn').style.display = save ? 'block' : 'none';
         }
 
         function continueGame() {
@@ -703,7 +677,6 @@
         function undoMove() {
             if (isAnimating || historyStack.length === 0) return;
 
-            // Pop the last single-move state snapshot
             const previousState = historyStack.pop();
             gameState = previousState.gameState;
             moveCount = previousState.moveCount;
@@ -766,12 +739,12 @@
 
             const totalBolts = gameState.length;
             
-            let boltWidthPx = Math.max(38, Math.min(68, Math.floor((board.clientWidth - (totalBolts * 10)) / (totalBolts / (totalBolts > 5 ? 2 : 1)))));
-            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
+            let boltWidthPx = Math.max(44, Math.min(80, Math.floor((board.clientWidth - (totalBolts * 12)) / (totalBolts / (totalBolts > 5 ? 2 : 1)))));
+            let nutHeightPx = Math.max(28, Math.min(48, Math.floor(380 / nutsPerColor)));
             
             let overlapPx = Math.floor(nutHeightPx * 0.35); 
             let effectiveHeight = nutHeightPx - overlapPx;
-            let boltHeightPx = (nutsPerColor + 1.25) * effectiveHeight + 30;
+            let boltHeightPx = (nutsPerColor + 1.25) * effectiveHeight + 35;
             
             const BASE_Y = 10;
 
@@ -878,7 +851,6 @@
         function animateNutMovement(srcIdx, destIdx, count) {
             isAnimating = true;
 
-            // Push a single state snapshot right before making the move
             historyStack.push({
                 gameState: JSON.parse(JSON.stringify(gameState)),
                 moveCount: moveCount
@@ -891,7 +863,7 @@
             const srcNuts = Array.from(srcBoltEl.querySelectorAll('.nut')).slice(-count);
             let completed = 0;
             
-            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
+            let nutHeightPx = Math.max(28, Math.min(48, Math.floor(380 / nutsPerColor)));
             let overlapPx = Math.floor(nutHeightPx * 0.35); 
             let effectiveHeight = nutHeightPx - overlapPx;
             const BASE_Y = 10;
@@ -1020,28 +992,8 @@
             initLevel(currentLevel + 1);
         }
 
-        // Auto-scaling handler for laptops and tablets
-        function handleResize() {
-            const wrapper = document.getElementById('scale-wrapper');
-            const card = document.getElementById('game-card');
-            const scaleX = window.innerWidth / 480;
-            const scaleY = window.innerHeight / 920;
-            let scale = Math.min(scaleX, scaleY);
-
-            if (window.innerWidth >= 500) {
-                scale = Math.min(scale, 0.92);
-                card.style.transform = `scale(${scale})`;
-            } else {
-                card.style.transform = 'none';
-            }
-            if (gameState.length > 0) renderBoard();
-        }
-
-        window.onload = () => { 
-            checkSavedGame(); 
-            handleResize();
-        };
-        window.onresize = handleResize;
+        window.onload = () => { checkSavedGame(); };
+        window.onresize = () => { if (gameState.length > 0) renderBoard(); };
     </script>
 </body>
 </html>
