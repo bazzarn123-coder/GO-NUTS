@@ -53,17 +53,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 6px 12px;
             z-index: 10;
-            gap: 12px;
+            gap: 10px;
             background: rgba(18, 8, 43, 0.6);
             backdrop-filter: blur(8px);
         }
 
         .icon-btn {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
             background: linear-gradient(145deg, #a55eea, #7b32d4);
             border: 2px solid #e0d4fc;
             border-radius: 10px;
@@ -80,8 +80,8 @@
         }
 
         .icon-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             fill: white;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
@@ -89,16 +89,16 @@
         /* Lower Action Bar (Home & Undo) */
         .action-bar {
             display: flex;
-            gap: 12px;
-            padding: 6px 12px 2px 12px;
+            gap: 10px;
+            padding: 4px 12px 2px 12px;
             z-index: 10;
             justify-content: flex-start;
         }
 
         .rect-btn {
-            height: 36px;
-            min-width: 110px;
-            padding: 0 14px;
+            height: 32px;
+            min-width: 100px;
+            padding: 0 12px;
             background: linear-gradient(145deg, #a55eea, #7b32d4);
             border: 2px solid #e0d4fc;
             border-radius: 8px;
@@ -110,7 +110,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
             transition: transform 0.1s, opacity 0.2s;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 0.5px;
             color: white;
         }
@@ -125,8 +125,8 @@
         }
 
         .rect-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             fill: white;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
@@ -139,7 +139,7 @@
         }
 
         .level-title {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 800;
             margin-bottom: 2px;
             letter-spacing: 0.5px;
@@ -150,7 +150,7 @@
         /* Progress & 3 Stars Bar */
         .progress-bar-bg {
             width: 100%;
-            height: 16px;
+            height: 14px;
             background-color: #120926;
             border-radius: 10px;
             position: relative;
@@ -175,8 +175,8 @@
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             z-index: 5;
             transition: filter 0.3s, transform 0.2s;
         }
@@ -202,7 +202,7 @@
         .move-counter {
             position: absolute;
             right: 6px;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
             color: #ffffff;
             z-index: 6;
@@ -216,11 +216,10 @@
             flex-wrap: wrap;
             justify-content: center;
             align-content: center;
-            gap: 8px;
-            padding: 4px 4px 60px 4px;
-            padding-bottom: max(60px, env(safe-area-inset-bottom));
+            gap: 6px;
+            padding: 2px 4px;
             position: relative;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .bolt-column {
@@ -231,8 +230,8 @@
         /* --- 3D Bolt Optical Illusion --- */
         .bolt-shaft-bg {
             position: absolute;
-            top: 10px;
-            bottom: 10px;
+            top: 8px;
+            bottom: 8px;
             width: 30%;
             left: 35%;
             background: 
@@ -245,7 +244,7 @@
 
         .bolt-shaft-fg {
             position: absolute;
-            top: 10px;
+            top: 8px;
             width: 30%;
             left: 35%;
             background: 
@@ -262,7 +261,7 @@
             bottom: 2px;
             width: 100%;
             left: 0;
-            height: 14px;
+            height: 12px;
             background: radial-gradient(ellipse at center, #cfd6df 0%, #747d8c 60%, #2f3542 100%);
             border-radius: 50%;
             z-index: 2;
@@ -327,15 +326,15 @@
         /* Banner Footer */
         .banner {
             background: linear-gradient(180deg, #241142 0%, #15092a 100%);
-            padding: 8px;
-            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            padding: 6px;
+            padding-bottom: max(6px, env(safe-area-inset-bottom));
             text-align: center;
             border-top: 2px solid #5f27cd;
             z-index: 10;
         }
 
         .banner h1 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 900;
             letter-spacing: 1.5px;
             background: linear-gradient(180deg, #ffffff 0%, #c8d6e5 100%);
@@ -359,18 +358,18 @@
             text-align: center;
         }
 
-        /* Specific Splash Modal Styling - Using the new image */
+        /* Specific Splash Modal Styling */
         #splash-modal {
             background: url('1790988079137.jpg') no-repeat center center;
             background-size: cover;
             backdrop-filter: none;
             justify-content: flex-start;
-            padding-top: 25vh; /* Adjusted to 25vh to sit neatly under the GO NUTS text */
+            padding-top: 25vh;
             padding-bottom: 0; 
         }
 
         .modal-title {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             background: linear-gradient(180deg, #feca57 0%, #ff9f43 100%);
             -webkit-background-clip: text;
@@ -380,28 +379,28 @@
         }
 
         .modal p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #dcdde1;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
-            max-width: 240px;
+            max-width: 220px;
         }
 
         .btn-action {
-            padding: 12px 20px;
-            font-size: 1rem;
+            padding: 10px 18px;
+            font-size: 0.95rem;
             font-weight: 800;
             color: white;
             background: linear-gradient(135deg, #1dd1a1, #10ac84);
             border: 2px solid #55efc4;
-            border-radius: 26px;
+            border-radius: 24px;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(16, 172, 132, 0.4);
             transition: transform 0.1s;
@@ -420,12 +419,12 @@
         .stars-summary {
             display: flex;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .stars-summary svg {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
         }
     </style>
 </head>
@@ -488,14 +487,14 @@
         </div>
 
         <div class="modal" id="win-modal" style="display:none;">
-            <h1 class="modal-title" style="font-size: 2rem;">LEVEL CLEARED!</h1>
+            <h1 class="modal-title" style="font-size: 1.8rem;">LEVEL CLEARED!</h1>
             <div class="stars-summary" id="win-stars"></div>
             <p id="win-subtitle">Great job sorting all the nuts!</p>
             <button class="btn-action" onclick="nextLevel()">NEXT LEVEL</button>
         </div>
 
         <div class="modal" id="no-moves-modal" style="display:none;">
-            <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial; font-size: 2rem;">NO MOVES LEFT</h1>
+            <h1 class="modal-title" style="color: #ff6b6b; background: none; -webkit-text-fill-color: initial; font-size: 1.8rem;">NO MOVES LEFT</h1>
             <p>No valid moves available on board!</p>
             <div class="btn-group">
                 <button class="btn-action" style="background: linear-gradient(135deg, #a55eea, #6c5ce7); border-color: #d6a2e8;" onclick="undoMove()">UNDO MOVE</button>
@@ -740,16 +739,24 @@
             board.innerHTML = '';
 
             const totalBolts = gameState.length;
-            
-            // Scaled Sizing calculations optimized for tighter fit
-            let boltWidthPx = Math.max(38, Math.min(68, Math.floor((board.clientWidth - (totalBolts * 10)) / (totalBolts / (totalBolts > 5 ? 2 : 1)))));
-            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
-            
+            const availableWidth = board.clientWidth - 16;
+            const availableHeight = board.clientHeight - 16;
+
+            // Dynamic grid layout calculations to fit screen without overflow
+            const boltsPerRow = totalBolts > 5 ? Math.ceil(totalBolts / 2) : totalBolts;
+            const rows = totalBolts > 5 ? 2 : 1;
+
+            const maxBoltW = Math.floor((availableWidth - (boltsPerRow * 8)) / boltsPerRow);
+            let boltWidthPx = Math.max(28, Math.min(54, maxBoltW));
+
+            const maxNutH = Math.floor((availableHeight - (rows * 26)) / (nutsPerColor + 1));
+            let nutHeightPx = Math.max(14, Math.min(34, maxNutH, Math.floor(280 / nutsPerColor)));
+
             let overlapPx = Math.floor(nutHeightPx * 0.35); 
             let effectiveHeight = nutHeightPx - overlapPx;
-            let boltHeightPx = (nutsPerColor + 1.25) * effectiveHeight + 30;
+            let boltHeightPx = (nutsPerColor + 1.25) * effectiveHeight + 24;
             
-            const BASE_Y = 10;
+            const BASE_Y = 8;
 
             gameState.forEach((boltNuts, boltIdx) => {
                 const boltEl = document.createElement('div');
@@ -780,7 +787,7 @@
                     let isSelected = boltIdx === selectedBoltIdx && nutIdx >= boltNuts.length - matchingGroupCount;
                     
                     if (isSelected) {
-                        bottomY += (nutHeightPx * 0.7); 
+                        bottomY += (nutHeightPx * 0.65); 
                         nutEl.classList.add('selected');
                     }
                     
@@ -854,7 +861,6 @@
         function animateNutMovement(srcIdx, destIdx, count) {
             isAnimating = true;
 
-            // Push state before modifying
             historyStack.push({
                 gameState: JSON.parse(JSON.stringify(gameState)),
                 moveCount: moveCount
@@ -867,10 +873,15 @@
             const srcNuts = Array.from(srcBoltEl.querySelectorAll('.nut')).slice(-count);
             let completed = 0;
             
-            let nutHeightPx = Math.max(26, Math.min(42, Math.floor(340 / nutsPerColor)));
+            const totalBolts = gameState.length;
+            const availableHeight = document.getElementById('board').clientHeight - 16;
+            const rows = totalBolts > 5 ? 2 : 1;
+            const maxNutH = Math.floor((availableHeight - (rows * 26)) / (nutsPerColor + 1));
+            let nutHeightPx = Math.max(14, Math.min(34, maxNutH, Math.floor(280 / nutsPerColor)));
+
             let overlapPx = Math.floor(nutHeightPx * 0.35); 
             let effectiveHeight = nutHeightPx - overlapPx;
-            const BASE_Y = 10;
+            const BASE_Y = 8;
 
             srcNuts.forEach((nutEl, idx) => {
                 const rect = nutEl.getBoundingClientRect();
@@ -889,16 +900,16 @@
                 const srcBoltRect = srcBoltEl.getBoundingClientRect();
                 const destBoltRect = destBoltEl.getBoundingClientRect();
 
-                const liftY = srcBoltRect.top - cardRect.top - 20 - (idx * 16);
+                const liftY = srcBoltRect.top - cardRect.top - 16 - (idx * 12);
                 const targetX = destBoltRect.left - cardRect.left + (destBoltRect.width - rect.width) / 2;
                 
                 const targetStackSize = gameState[destIdx].length + idx;
                 const destNutBottom = BASE_Y + targetStackSize * effectiveHeight;
                 const dropY = destBoltRect.bottom - cardRect.top - destNutBottom - nutHeightPx;
 
-                setTimeout(() => { clone.style.top = `${liftY}px`; }, idx * 60);
-                setTimeout(() => { clone.style.left = `${targetX}px`; }, idx * 60 + 150);
-                setTimeout(() => { clone.style.top = `${dropY}px`; }, idx * 60 + 300);
+                setTimeout(() => { clone.style.top = `${liftY}px`; }, idx * 50);
+                setTimeout(() => { clone.style.left = `${targetX}px`; }, idx * 50 + 120);
+                setTimeout(() => { clone.style.top = `${dropY}px`; }, idx * 50 + 250);
 
                 setTimeout(() => {
                     clone.remove();
@@ -924,7 +935,7 @@
                             checkNoMovesLeft();
                         }
                     }
-                }, idx * 60 + 450);
+                }, idx * 50 + 380);
             });
         }
 
